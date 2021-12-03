@@ -11,11 +11,13 @@ output: # Différents formats de sorties
   # Si on compile en pdf:
   pdf_document:
     toc: yes # Montre-ton la table des matières?
+bibliography: references.bib
+link-citations: yes
 encoding: UTF-8 # Encodage
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
+knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE, # Les warning n'apparaissent pas
                       comment = NA, # Les résultats sont affichés sans # devant
                       eval = TRUE, # Par défaut, les codes sont évalués
@@ -92,12 +94,12 @@ fviz_eig(inca2_pca)
 ```
 
 ## ACP sur les sous catégories
-On repère sur le graphique des corrélations deux groupes qui semblent être 
-faiblement corrélés, nous allons donc les étudier en les séparant.
+On repère sur le graphique des corrélations plusieurs groupes qui semblent être 
+faiblement corrélés en dehors des groupes, nous allons donc les étudier en les séparant.
 
 ### Sous bloc 1 : Par semaine
 ```{r}
-inca2_sem <- inca2_numerique[c(1:14)]
+inca2_sem <- inca2_numerique[c(1:7)]
 correlation_inca2_sem = cor(inca2_sem)
 corrplot(correlation_inca2_sem)
 inca2_sem_pca = PCA(inca2_sem, graph = FALSE, scale.unit = TRUE)
@@ -105,3 +107,45 @@ kable(get_eigenvalue(inca2_sem_pca))
 fviz_eig(inca2_sem_pca)
 ```
 
+```{r graphique acp semaine}
+fviz_pca_var(inca2_sem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=1:2)
+fviz_pca_var(inca2_sem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=2:3)
+fviz_pca_var(inca2_sem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=3:4)
+```
+
+### Sous bloc 2 : Les jours de la semaine
+
+```{r}
+inca2_joursem <- inca2_numerique[c(7:14)]
+correlation_inca2_joursem = cor(inca2_joursem)
+corrplot(correlation_inca2_joursem)
+inca2_joursem_pca = PCA(inca2_joursem, graph = FALSE, scale.unit = TRUE)
+kable(get_eigenvalue(inca2_joursem_pca))
+fviz_eig(inca2_joursem_pca)
+```
+
+```{r graphique acp jour de la semaine}
+fviz_pca_var(inca2_joursem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=1:2)
+fviz_pca_var(inca2_joursem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=2:3)
+fviz_pca_var(inca2_joursem_pca, geom = c("text", "arrow"), col.var = "cos2", axes=3:4)
+```
+
+### Sous bloc 3 : Par jour
+```{r}
+inca2_par_jour <- inca2_numerique[-c(1:14)]
+correlation_inca2_par_jour = cor(inca2_par_jour)
+corrplot(correlation_inca2_par_jour)
+inca2_par_jour_pca = PCA(inca2_par_jour, graph = FALSE, scale.unit = TRUE)
+kable(get_eigenvalue(inca2_par_jour_pca))
+fviz_eig(inca2_par_jour_pca)
+```
+
+```{r graphique acp par jour}
+fviz_pca_var(inca2_par_jour_pca, geom = c("text", "arrow"), col.var = "cos2", axes=1:2)
+fviz_pca_var(inca2_par_jour_pca, geom = c("text", "arrow"), col.var = "cos2", axes=2:3)
+fviz_pca_var(inca2_par_jour_pca, geom = c("text", "arrow"), col.var = "cos2", axes=3:4)
+```
+
+- On observe un lien entre la *vitamine E* et les *acides gras polyinsaturés*, d'après @VitE-AGPolyinsat la vitamine E joue un rôle antioxydant et protège ainsi les acides gras polyinsaturés de l'oxydation.
+
+# Bibliographie
